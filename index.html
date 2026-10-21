@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>10-10至10-21减肥12天小结</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root{
+    --teal:#2E9599; --teal-soft:rgba(46,149,153,.12);
+    --purple:#6C7BE0; --purple-soft:rgba(108,123,224,.12);
+    --ink:#1f2937; --muted:#6b7280;
+    --line:rgba(0,0,0,.07); --bg:#f4f6f8;
+    --green:#2e9e6b; --yellow:#d99a2b; --red:#d9534f;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; padding:32px 16px 64px;
+    background:linear-gradient(180deg,#eef3f4 0%, #f7f9fa 320px, var(--bg) 100%);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  .page{max-width:960px;margin:0 auto;}
+
+  header.hero{
+    background:#fff; border-radius:20px; padding:32px 28px;
+    box-shadow:0 10px 30px rgba(31,41,55,.07);
+    margin-bottom:26px; border:1px solid var(--line);
+  }
+  header.hero h1{margin:0 0 8px; font-size:26px; letter-spacing:.5px;}
+  header.hero .sub{color:var(--muted); font-size:14px; margin:0;}
+  .badges{display:flex; flex-wrap:wrap; gap:8px; margin-top:16px;}
+  .badge{
+    font-size:12.5px; padding:4px 12px; border-radius:999px;
+    background:var(--teal-soft); color:#227679; font-weight:500;
+  }
+  .badge.p{background:var(--purple-soft); color:#4a56b8;}
+
+  section.person{
+    background:#fff; border-radius:20px; padding:28px;
+    box-shadow:0 8px 24px rgba(31,41,55,.06);
+    border:1px solid var(--line); margin-bottom:26px;
+  }
+  .person-head{display:flex; align-items:center; gap:12px; margin-bottom:6px;}
+  .avatar{
+    width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
+    font-weight:700; color:#fff; font-size:15px; letter-spacing:.5px;
+  }
+  .avatar.teal{background:linear-gradient(135deg,#3fb0b4,#2E9599);}
+  .avatar.purple{background:linear-gradient(135deg,#8592ee,#6C7BE0);}
+  .person-head h2{margin:0; font-size:20px;}
+  .person-head .tag{font-size:12.5px;color:var(--muted);margin-left:2px;}
+  .divider{height:1px;background:var(--line);margin:18px 0 22px;}
+
+  h3.block-title{
+    font-size:15px; margin:0 0 14px; display:flex; align-items:center; gap:8px;
+    color:#111827; letter-spacing:.3px;
+  }
+  h3.block-title::before{
+    content:""; width:4px; height:16px; border-radius:2px; background:var(--teal);
+  }
+  .purple-block h3.block-title::before{background:var(--purple);}
+
+  .metrics{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:12px; margin-bottom:26px;
+  }
+  .metric{
+    background:#fafbfc; border:1px solid var(--line); border-radius:14px;
+    padding:14px 16px;
+  }
+  .metric .k{font-size:12.5px; color:var(--muted); margin-bottom:4px;}
+  .metric .v{font-size:21px; font-weight:700; letter-spacing:.3px;}
+  .metric .v small{font-size:12.5px; font-weight:500; color:var(--muted); margin-left:2px;}
+  .metric .v.down{color:var(--teal);}
+  .purple-block .metric .v.down{color:var(--purple);}
+
+  .charts{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px;}
+  .chart-card{
+    border:1px solid var(--line); border-radius:14px; padding:16px 16px 10px;
+    background:#fff;
+  }
+  .chart-card.full{grid-column:1 / -1;}
+  .chart-card h4{margin:0 0 4px; font-size:13.5px; font-weight:600; color:#374151;}
+  .chart-card .hint{font-size:11.5px; color:#9ca3af; margin:0 0 10px;}
+  .chart-box{height:230px; position:relative;}
+  .chart-box.small{height:200px;}
+
+  table.lights{width:100%; border-collapse:collapse; font-size:13.5px;}
+  table.lights th{
+    text-align:left; font-weight:600; color:var(--muted); font-size:12.5px;
+    padding:9px 10px; border-bottom:1px solid var(--line);
+  }
+  table.lights td{padding:11px 10px; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.lights tr:last-child td{border-bottom:none;}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:1px;}
+  .dot.g{background:var(--green);} .dot.y{background:var(--yellow);} .dot.r{background:var(--red);}
+
+  ol.advice{margin:0; padding-left:0; list-style:none; counter-reset:adv;}
+  ol.advice li{
+    position:relative; padding:11px 0 11px 40px; font-size:14px;
+    border-bottom:1px dashed var(--line);
+  }
+  ol.advice li:last-child{border-bottom:none;}
+  ol.advice li::before{
+    counter-increment:adv; content:counter(adv);
+    position:absolute; left:0; top:11px;
+    width:24px;height:24px;border-radius:8px; display:grid;place-items:center;
+    font-size:12px; font-weight:700; color:#fff; background:var(--teal);
+  }
+  .purple-block ol.advice li::before{background:var(--purple);}
+  ol.advice li b{color:#111827;}
+
+  .goals{background:#fff;border-radius:20px;padding:28px;border:1px solid var(--line);
+         box-shadow:0 8px 24px rgba(31,41,55,.06);}
+  table.goals-table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  table.goals-table th{
+    text-align:left;padding:10px 12px;font-size:12.5px;color:var(--muted);
+    border-bottom:1px solid var(--line); font-weight:600;
+  }
+  table.goals-table td{padding:13px 12px;border-bottom:1px solid var(--line);vertical-align:top;}
+  table.goals-table tr:last-child td{border-bottom:none;}
+  table.goals-table td.name{font-weight:600;white-space:nowrap;}
+
+  footer.note{
+    text-align:center; color:#9ca3af; font-size:12px; margin-top:26px; line-height:1.9;
+  }
+
+  @media (max-width:720px){
+    body{padding:20px 12px 48px;}
+    section.person, header.hero, .goals{padding:22px 18px; border-radius:16px;}
+    .charts{grid-template-columns:1fr;}
+    header.hero h1{font-size:22px;}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="hero">
+    <h1>10-10 至 10-21 减肥 12 天小结</h1>
+    <p class="sub">阶段性复盘 · 体重趋势 / 作息 / 饮食 / 行动建议</p>
+    <div class="badges">
+      <span class="badge">统计周期 12 天</span>
+      <span class="badge">体重单位：斤</span>
+      <span class="badge">两人分别分析，不做横向对比</span>
+      <span class="badge p">已化名 · 不展示具体体重</span>
+    </div>
+  </header>
+
+  <!-- ==================== YZ ==================== -->
+  <section class="person">
+    <div class="person-head">
+      <div class="avatar teal">YZ</div>
+      <h2>YZ</h2>
+      <span class="tag">参与 10 / 12 天</span>
+    </div>
+
+    <div class="metrics">
+      <div class="metric">
+        <div class="k">阶段体重变化</div>
+        <div class="v down">−2.9 <small>斤 · 约1.8%</small></div>
+      </div>
+      <div class="metric">
+        <div class="k">趋势</div>
+        <div class="v">先快后稳</div>
+      </div>
+      <div class="metric">
+        <div class="k">实际参与</div>
+        <div class="v">10 <small>/ 12 天</small></div>
+      </div>
+      <div class="metric">
+        <div class="k">01:00 后入睡</div>
+        <div class="v">6 <small>/ 10 天</small></div>
+      </div>
+    </div>
+
+    <h3 class="block-title">体重与节奏</h3>
+    <div class="charts">
+      <div class="chart-card full">
+        <h4>体重趋势（相对起始的变化量，斤）</h4>
+        <p class="hint">纵轴为相对阶段起点的变化，不展示具体体重值；10-15、10-21 未参与</p>
+        <div class="chart-box"><canvas id="foldWeight"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h4>阶段减重速度（斤，正值＝下降）</h4>
+        <p class="hint">前期下降快，后段趋于平台</p>
+        <div class="chart-box small"><canvas id="foldSpeed"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h4>参与完整度</h4>
+        <p class="hint">12 天中实际参与 10 天</p>
+        <div class="chart-box small"><canvas id="foldJoin"></canvas></div>
+      </div>
+    </div>
+
+    <h3 class="block-title">作息情况</h3>
+    <div class="charts">
+      <div class="chart-card">
+        <h4>入睡时间分布</h4>
+        <p class="hint">按区间归类，越靠上越晚</p>
+        <div class="chart-box"><canvas id="foldSleepAt"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h4>睡眠时长分布</h4>
+        <p class="hint">红色＝不足 7 小时</p>
+        <div class="chart-box"><canvas id="foldSleepLen"></canvas></div>
+      </div>
+    </div>
+
+    <h3 class="block-title">饮食结构</h3>
+    <div class="charts">
+      <div class="chart-card">
+        <h4>早餐蛋白达标（参与 10 天）</h4>
+        <p class="hint">茶叶蛋、鸡蛋咖啡、豆腐脑包子等计入</p>
+        <div class="chart-box small"><canvas id="foldBreakfast"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h4>高热量饮食天数（参与 10 天）</h4>
+        <p class="hint">炸物、薯片、麻辣香锅、大份饺子等</p>
+        <div class="chart-box small"><canvas id="foldHeavy"></canvas></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h3 class="block-title">红绿灯速览</h3>
+    <table class="lights">
+      <thead>
+        <tr><th style="width:26%">维度</th><th style="width:12%">状态</th><th>观察</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>体重趋势</td><td><span class="dot g"></span>良好</td><td>阶段累计下降约 2.9 斤，近期稳定，未见明显反弹</td></tr>
+        <tr><td>参与连续性</td><td><span class="dot y"></span>待加强</td><td>12 天参与 10 天，有 2 天断档</td></tr>
+        <tr><td>早餐蛋白</td><td><span class="dot g"></span>良好</td><td>7/10 天有蛋白来源，起步不错</td></tr>
+        <tr><td>晚餐 / 加餐</td><td><span class="dot y"></span>待加强</td><td>高热量记录 9/10 天，饺子单次 14—17 个出现 3 次</td></tr>
+        <tr><td>运动</td><td><span class="dot r"></span>短板</td><td>正式运动 0 次，仅 10-14 做家务</td></tr>
+        <tr><td>睡眠</td><td><span class="dot r"></span>短板</td><td>6 天 01:00 后入睡，最短仅 3.4 小时</td></tr>
+      </tbody>
+    </table>
+
+    <div class="divider"></div>
+
+    <h3 class="block-title">改进建议</h3>
+    <ol class="advice">
+      <li><b>破平台先加运动</b>：每周 3 次 20—30 分钟快走 / 自重训练，比继续压饮食更可持续；晚睡日改成 10 分钟拉伸。</li>
+      <li><b>饺子定量</b>：一餐先盛 10—12 个，配一大份蔬菜；薯片、炸物每周不超过 1 次小份。</li>
+      <li><b>睡眠往前挪 15 分钟</b>：目标先从「00:30 前上床」开始，比直接要求 23:00 更容易坚持。</li>
+      <li><b>断档日只记体重 + 睡眠</b>：降低记录门槛，保持连续性。</li>
+    </ol>
+  </section>
+
+  <!-- ==================== CY ==================== -->
+  <section class="person purple-block">
+    <div class="person-head">
+      <div class="avatar purple">CY</div>
+      <h2>CY</h2>
+      <span class="tag">全勤 12 / 12 天</span>
+    </div>
+
+    <div class="metrics">
+      <div class="metric">
+        <div class="k">阶段体重变化</div>
+        <div class="v down">−5.9 <small>斤 · 约4.4%</small></div>
+      </div>
+      <div class="metric">
+        <div class="k">趋势</div>
+        <div class="v">平稳下行</div>
+      </div>
+      <div class="metric">
+        <div class="k">实际参与</div>
+        <div class="v">12 <small>/ 12 天</small></div>
+      </div>
+      <div class="metric">
+        <div class="k">01:00 后入睡</div>
+        <div class="v">7 <small>/ 12 天</small></div>
+      </div>
+    </div>
+
+    <h3 class="block-title">体重与节奏</h3>
+    <div class="charts">
+      <div class="chart-card full">
+        <h4>体重趋势（相对起始的变化量，斤）</h4>
+        <p class="hint">纵轴为相对阶段起点的变化，不展示具体体重值；10-17 有小幅反弹后继续下行</p>
+        <div class="chart-box"><canvas id="kWeight"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h4>阶段减重速度（斤，正值＝下降）</h4>
+        <p class="hint">速度放缓但方向稳定，属于健康节奏</p>
+        <div class="chart-box small"><canvas id="kSpeed"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h4>参与完整度</h4>
+        <p class="hint">12 天全勤，执行度很好</p>
+        <div class="chart-box small"><canvas id="kJoin"></canvas></div>
+      </div>
+    </div>
+
+    <h3 class="block-title">作息情况</h3>
+    <div class="charts">
+      <div class="chart-card">
+        <h4>入睡时间分布</h4>
+        <p class="hint">按区间归类，越靠上越晚</p>
+        <div class="chart-box"><canvas id="kSleepAt"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h4>睡眠时长分布</h4>
+        <p class="hint">红色＝不足 7 小时</p>
+        <div class="chart-box"><canvas id="kSleepLen"></canvas></div>
+      </div>
+    </div>
+
+    <h3 class="block-title">饮食结构</h3>
+    <div class="charts">
+      <div class="chart-card">
+        <h4>早餐蛋白达标（12 天）</h4>
+        <p class="hint">仅 2 天有蛋白来源，多数为饮品或空腹</p>
+        <div class="chart-box small"><canvas id="kBreakfast"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h4>高热量饮食天数（12 天）</h4>
+        <p class="hint">火锅、炸物、甜甜圈、喜糖、响铃卷等</p>
+        <div class="chart-box small"><canvas id="kHeavy"></canvas></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h3 class="block-title">红绿灯速览</h3>
+    <table class="lights">
+      <thead>
+        <tr><th style="width:26%">维度</th><th style="width:12%">状态</th><th>观察</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>体重趋势</td><td><span class="dot g"></span>良好</td><td>阶段累计下降约 5.9 斤，平稳下行，小反弹后继续下降</td></tr>
+        <tr><td>参与连续性</td><td><span class="dot g"></span>良好</td><td>12/12 天全勤，执行度很好</td></tr>
+        <tr><td>早餐蛋白</td><td><span class="dot r"></span>短板</td><td>仅 2/12 天有蛋白来源，多数空腹或只喝饮品</td></tr>
+        <tr><td>晚餐 / 加餐</td><td><span class="dot y"></span>待加强</td><td>高热量 8/12 天，集中在火锅、炸物、甜食</td></tr>
+        <tr><td>运动</td><td><span class="dot y"></span>待加强</td><td>正式运动 0 次，且有腰疼记录，需先保护腰部</td></tr>
+        <tr><td>睡眠</td><td><span class="dot y"></span>待加强</td><td>7 天 01:00 后入睡，后段连续偏晚</td></tr>
+      </tbody>
+    </table>
+
+    <div class="divider"></div>
+
+    <h3 class="block-title">改进建议</h3>
+    <ol class="advice">
+      <li><b>早餐加一份蛋白</b>：鸡蛋、无糖酸奶、牛奶任选其一，先把「有蛋白天数」从 2 天提到 5 天。</li>
+      <li><b>晚餐尽量 20:00 前</b>：外食优先清汤、少酱、少油炸；火锅少喝汤底、少响铃卷。</li>
+      <li><b>甜食炸物定量</b>：每周 1—2 次小份额，比如喜糖 / 甜甜圈选一次少量吃，比完全禁更容易坚持。</li>
+      <li><b>腰疼优先康复</b>：先低强度步行、核心稳定和拉伸，不硬上高强度；持续疼痛建议先评估。</li>
+      <li><b>睡眠目标 01:00 前</b>：后段连续晚睡，可先从「02:30 前」逐步提前。</li>
+    </ol>
+  </section>
+
+  <!-- ==================== 目标 ==================== -->
+  <section class="goals">
+    <h3 class="block-title">下一阶段 7 天小目标</h3>
+    <table class="goals-table">
+      <thead>
+        <tr><th style="width:16%">对象</th><th>7 天目标</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="name">YZ</td>
+          <td>至少 6 天当天记录 · 正式运动 3 次 × 20 分钟 · 饺子先盛 10—12 个 · 高热量 ≤ 2 次 · 至少 4 天 00:30 前上床</td>
+        </tr>
+        <tr>
+          <td class="name">CY</td>
+          <td>保持每天记录 · 早餐蛋白 ≥ 5 天 · 晚餐 ≥ 4 天 20:00 前结束 · 甜食炸物 ≤ 2 次小份 · 每天 10 分钟腰部拉伸</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer class="note">
+    本页已化名处理，不展示具体体重数值；体重单位为斤，趋势按相对变化展示。<br>
+    体重日波动属正常现象，看趋势比看单日数字更重要。
+  </footer>
+</div>
+
+<script>
+Chart.defaults.font.family = "-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif";
+Chart.defaults.font.size = 11.5;
+Chart.defaults.color = '#6b7280';
+const GRID = 'rgba(0,0,0,0.06)';
+
+function lineChart(id, labels, data, opt){
+  opt = opt || {};
+  const c = opt.color || '#2E9599';
+  new Chart(document.getElementById(id), {
+    type: 'line',
+    data: { labels: labels, datasets: [{
+      data: data, borderColor: c,
+      backgroundColor: opt.fill || 'rgba(46,149,153,.10)',
+      fill: true, tension: .3, borderWidth: 2.2,
+      pointRadius: 3.5, pointHoverRadius: 6,
+      pointBackgroundColor: '#fff', pointBorderColor: c, pointBorderWidth: 2
+    }]},
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { displayColors: false, padding: 9, cornerRadius: 8,
+          callbacks: { label: function(ctx){ return ' ' + ctx.parsed.y + (opt.unit || ''); } } }
+      },
+      scales: {
+        y: { min: opt.min, max: opt.max, grid: { color: GRID, drawBorder: false },
+             ticks: { precision: 1 } },
+        x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkip: false, font: { size: 10.5 } } }
+      }
+    }
+  });
+}
+
+function barChart(id, labels, data, opt){
+  opt = opt || {};
+  new Chart(document.getElementById(id), {
+    type: 'bar',
+    data: { labels: labels, datasets: [{
+      data: data,
+      backgroundColor: typeof opt.colors === 'function' ? data.map(opt.colors) : (opt.colors || '#2E9599'),
+      borderRadius: 6, maxBarThickness: opt.thin ? 44 : 70
+    }]},
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { displayColors: false, padding: 9, cornerRadius: 8,
+          callbacks: { label: function(ctx){ return ' ' + ctx.parsed.y + (opt.unit || ''); } } }
+      },
+      scales: {
+        y: { min: 0, max: opt.max, grid: { color: GRID, drawBorder: false }, ticks: { precision: 0 } },
+        x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkip: false, font: { size: 10.5 } } }
+      }
+    }
+  });
+}
+
+function doughnut(id, labels, data, colors){
+  new Chart(document.getElementById(id), {
+    type: 'doughnut',
+    data: { labels: labels, datasets: [{ data: data, backgroundColor: colors, borderWidth: 0, hoverOffset: 4 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '62%',
+      plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 10, boxHeight: 10, padding: 14, font: { size: 11.5 } } },
+        tooltip: { padding: 9, cornerRadius: 8 }
+      }
+    }
+  });
+}
+
+/* ============ YZ 数据（相对起始的变化量，斤） ============ */
+const A_DAYS = ["10-10","10-11","10-12","10-13","10-14","10-16","10-17","10-18","10-19","10-20"];
+lineChart('foldWeight', A_DAYS, [0, -2.5, -2.1, -2.8, -3.2, -2.6, -2.3, -2.8, -2.9, -2.9],
+  { min: -4, max: 0.5, unit: ' 斤', color: '#2E9599', fill: 'rgba(46,149,153,.10)' });
+
+barChart('foldSpeed', ["10-10→10-14","10-16→10-20"], [3.2, 0.3],
+  { unit: ' 斤', colors: ['#2E9599','#9ad3d4'], max: 4, thin: true });
+
+doughnut('foldJoin', ['已参与','未参与'], [10, 2], ['#2E9599','#e5e7eb']);
+
+lineChart('foldSleepAt', A_DAYS, [6,6,3,5,6,6,6,3,6,6],
+  { min: 0, max: 8, unit: '（区间分）', color: '#2E9599', fill: 'rgba(46,149,153,.10)' });
+
+barChart('foldSleepLen', A_DAYS, [6.0,5.68,7.2,5.98,5.0,4.92,3.4,7.68,8.0,5.5],
+  { unit: ' 小时', max: 10,
+    colors: function(v){ return v < 7 ? 'rgba(217,83,79,.82)' : 'rgba(46,149,153,.78)'; } });
+
+doughnut('foldBreakfast', ['有蛋白来源','无 / 仅主食'], [7, 3], ['#2E9599','#e5e7eb']);
+doughnut('foldHeavy',     ['有高热量记录','较清淡'],     [9, 1], ['#e8a33d','#d1e7e8']);
+
+/* ============ CY 数据（相对起始的变化量，斤） ============ */
+const B_DAYS = ["10-10","10-11","10-12","10-13","10-14","10-15","10-16","10-17","10-18","10-19","10-20","10-21"];
+lineChart('kWeight', B_DAYS, [0, -1.2, -1.5, -2.2, -3.0, -4.1, -4.7, -4.0, -4.7, -5.2, -5.6, -5.9],
+  { min: -7, max: 0.5, unit: ' 斤', color: '#6C7BE0', fill: 'rgba(108,123,224,.10)' });
+
+barChart('kSpeed', ["10-10→10-14","10-16→10-21"], [3.0, 1.2],
+  { unit: ' 斤', colors: ['#6C7BE0','#b8c0f5'], max: 4, thin: true });
+
+doughnut('kJoin', ['已参与','未参与'], [12, 0], ['#6C7BE0','#e5e7eb']);
+
+lineChart('kSleepAt', B_DAYS, [6,5,3,5,6,2,6,6,6,6,6,6],
+  { min: 0, max: 8, unit: '（区间分）', color: '#6C7BE0', fill: 'rgba(108,123,224,.10)' });
+
+barChart('kSleepLen', B_DAYS, [8.0,7.25,9.0,7.5,6.17,8.0,6.83,6.33,6.17,6.33,6.33,7.5],
+  { unit: ' 小时', max: 10,
+    colors: function(v){ return v < 7 ? 'rgba(217,83,79,.82)' : 'rgba(108,123,224,.78)'; } });
+
+doughnut('kBreakfast', ['有蛋白来源','无 / 仅饮品'], [2, 10], ['#6C7BE0','#e5e7eb']);
+doughnut('kHeavy',     ['有高热量记录','较清淡 / 中等'], [8, 4], ['#e8a33d','#d8dcf7']);
+</script>
+</body>
+</html>
