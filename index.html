@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>减肥打卡报告 · 目录</title>
+<style>
+  :root{
+    --teal:#2E9599; --purple:#6C7BE0;
+    --ink:#1f2937; --muted:#6b7280;
+    --line:rgba(0,0,0,.07); --bg:#f4f6f8;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; padding:48px 16px 64px;
+    background:linear-gradient(180deg,#eef3f4 0%, #f7f9fa 320px, var(--bg) 100%);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  .page{max-width:720px;margin:0 auto;}
+  header{
+    background:#fff; border-radius:20px; padding:32px 28px;
+    box-shadow:0 10px 30px rgba(31,41,55,.07);
+    border:1px solid var(--line); margin-bottom:22px;
+  }
+  header h1{margin:0 0 8px; font-size:24px; letter-spacing:.5px;}
+  header p{margin:0; color:var(--muted); font-size:14px;}
+  .list{
+    background:#fff; border-radius:20px; padding:12px;
+    border:1px solid var(--line); box-shadow:0 8px 24px rgba(31,41,55,.06);
+  }
+  .item{
+    display:flex; align-items:center; gap:14px;
+    padding:16px 16px; border-radius:14px;
+    text-decoration:none; color:var(--ink);
+    transition:background .15s, transform .15s;
+  }
+  .item:hover{background:#f5f9f9; transform:translateX(2px);}
+  .item + .item{border-top:1px solid var(--line);}
+  .icon{
+    flex:0 0 40px; width:40px; height:40px; border-radius:12px;
+    display:grid; place-items:center; color:#fff; font-size:18px;
+    background:linear-gradient(135deg,#3fb0b4,#2E9599);
+  }
+  .meta{flex:1; min-width:0;}
+  .meta .name{font-weight:600; font-size:15px; word-break:break-all;}
+  .meta .desc{font-size:12.5px; color:var(--muted); margin-top:2px;}
+  .arrow{color:#c4cbd0; font-size:18px;}
+  .empty{
+    padding:40px 20px; text-align:center; color:var(--muted); font-size:14px;
+  }
+  footer{
+    text-align:center; color:#9ca3af; font-size:12px; margin-top:26px; line-height:1.9;
+  }
+  @media (max-width:560px){
+    body{padding:24px 12px 48px;}
+    header{padding:24px 20px; border-radius:16px;}
+    header h1{font-size:20px;}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <h1>减肥打卡报告 · 目录</h1>
+    <p>点击下方条目查看对应周期的阶段小结</p>
+  </header>
+
+  <div class="list" id="list">
+    <div class="empty">正在加载报告列表…</div>
+  </div>
+
+  <footer>
+    本页仅列出同目录下的 .html 报告文件；新增报告后刷新即可自动出现。
+  </footer>
+</div>
+
+<script>
+/* 手动维护的报告列表：以后新增报告，在这里加一行即可 */
+const REPORTS = [
+  {
+    file: "2026-10-10_10-21.html",
+    title: "10-10 至 10-21 减肥 12 天小结",
+    desc: "YZ · CY 阶段性复盘"
+  }
+  /* 新增示例：
+  {
+    file: "2026-10-22_11-04.html",
+    title: "10-22 至 11-04 减肥小结",
+    desc: "第二阶段复盘"
+  }
+  */
+];
+
+const list = document.getElementById('list');
+
+if (REPORTS.length === 0) {
+  list.innerHTML = '<div class="empty">还没有报告，先在列表里添加一条吧～</div>';
+} else {
+  list.innerHTML = REPORTS.map(function(r){
+    return `
+      <a class="item" href="./${encodeURI(r.file)}">
+        <div class="icon">📄</div>
+        <div class="meta">
+          <div class="name">${r.title}</div>
+          <div class="desc">${r.desc || ''}</div>
+        </div>
+        <div class="arrow">›</div>
+      </a>`;
+  }).join('');
+}
+</script>
+</body>
+</html>
