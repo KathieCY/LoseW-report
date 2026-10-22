@@ -4,18 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>减肥打卡报告 · 目录</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
   :root{
-    --teal:#2E9599; --teal-2:#3fb0b4; --purple:#6C7BE0;
+    --teal:#2E9599; --purple:#6C7BE0; --amber:#d99a2b;
     --ink:#1f2937; --muted:#6b7280;
     --line:rgba(0,0,0,.07); --bg:#f4f6f8;
-    --card:#ffffff; --card-hover:#f5f9f9;
+    --card-bg:#ffffff; --card-hover:#f3f9f9;
+    --tips-bg:#fffdf4; --tips-hover:#fff8e3;
     --hero-grad:linear-gradient(135deg,#2E9599 0%,#4fb8b0 55%,#6C7BE0 100%);
   }
   html[data-theme="dark"]{
     --ink:#e5e7eb; --muted:#9ca3af;
     --line:rgba(255,255,255,.08); --bg:#0f1419;
-    --card:#171d23; --card-hover:#1d252c;
+    --card-bg:#171d23; --card-hover:#1d252c;
+    --tips-bg:#1e1a10; --tips-hover:#262016;
     --hero-grad:linear-gradient(135deg,#1f6f73 0%,#2E9599 55%,#4a56b8 100%);
   }
   *{box-sizing:border-box;}
@@ -26,15 +29,15 @@
     line-height:1.65; -webkit-font-smoothing:antialiased;
     transition:background .25s, color .25s;
   }
-  .page{max-width:760px;margin:0 auto;}
+  .page{max-width:880px;margin:0 auto;}
 
   /* ---------- 头部 ---------- */
   header.hero{
     position:relative; overflow:hidden;
     background:var(--hero-grad); border-radius:22px;
-    padding:38px 30px 32px; color:#fff;
+    padding:34px 28px 28px; color:#fff;
     box-shadow:0 14px 36px rgba(46,149,153,.28);
-    margin-bottom:22px;
+    margin-bottom:20px;
   }
   header.hero::after{
     content:""; position:absolute; right:-60px; top:-60px;
@@ -46,76 +49,367 @@
     width:160px; height:160px; border-radius:50%;
     background:rgba(255,255,255,.08);
   }
-  header.hero h1{margin:0 0 8px; font-size:26px; letter-spacing:.5px; position:relative;}
-  header.hero p{margin:0; font-size:14px; opacity:.92; position:relative;}
-  .hero-badge{
-    display:inline-block; margin-top:16px; padding:4px 12px;
-    border-radius:999px; background:rgba(255,255,255,.18);
-    font-size:12.5px; position:relative; backdrop-filter:blur(4px);
-  }
-
-  /* ---------- 主题切换 ---------- */
+  header.hero h1{margin:0 0 6px; font-size:25px; letter-spacing:.5px; position:relative;}
+  header.hero p{margin:0; font-size:13.5px; opacity:.92; position:relative;}
   .theme-toggle{
-    position:absolute; top:18px; right:18px; z-index:2;
+    position:absolute; top:16px; right:16px; z-index:2;
     width:36px; height:36px; border-radius:10px;
     border:none; cursor:pointer; font-size:16px;
     background:rgba(255,255,255,.2); color:#fff;
-    display:grid; place-items:center;
-    transition:background .15s;
+    display:grid; place-items:center; transition:background .15s;
   }
   .theme-toggle:hover{background:rgba(255,255,255,.32);}
 
-  /* ---------- 列表 ---------- */
-  .list{
-    background:var(--card); border-radius:20px; padding:10px;
-    border:1px solid var(--line);
-    box-shadow:0 8px 24px rgba(31,41,55,.06);
-    transition:background .25s;
+  /* 成就区 */
+  .achievement{
+    margin-top:20px; position:relative;
+    background:rgba(255,255,255,.15);
+    backdrop-filter:blur(8px);
+    border:1px solid rgba(255,255,255,.22);
+    border-radius:16px;
+    padding:20px 22px 18px;
   }
-  .item{
-    display:flex; align-items:center; gap:15px;
-    padding:17px 16px; border-radius:14px;
-    text-decoration:none; color:var(--ink);
-    transition:background .15s, transform .15s;
+  .ach-label{
+    font-size:12px; font-weight:600; letter-spacing:.5px;
+    opacity:.92; display:flex; align-items:center; gap:6px;
   }
-  .item:hover{background:var(--card-hover); transform:translateX(3px);}
-  .item + .item{border-top:1px solid var(--line);}
+  .ach-days{
+    display:flex; align-items:baseline; gap:8px;
+    margin:6px 0 4px;
+  }
+  .ach-days .num{
+    font-size:52px; font-weight:800; line-height:1;
+    letter-spacing:-1px;
+    text-shadow:0 2px 12px rgba(0,0,0,.12);
+  }
+  .ach-days .unit{font-size:16px; font-weight:600; opacity:.9;}
+  .ach-dates{font-size:13px; opacity:.92; margin-bottom:14px;}
+  .ach-dates b{font-weight:700;}
 
-  .num{
-    flex:0 0 40px; width:40px; height:40px; border-radius:12px;
-    display:grid; place-items:center;
-    font-weight:700; font-size:14px; color:#fff;
-    background:linear-gradient(135deg,var(--teal-2),var(--teal));
-    box-shadow:0 4px 12px rgba(46,149,153,.28);
+  /* 连续记录徽标 */
+  .streak-row{
+    display:flex; flex-wrap:wrap; gap:8px;
+    margin:-4px 0 14px;
   }
-  .item:nth-child(even) .num{
-    background:linear-gradient(135deg,#8592ee,var(--purple));
-    box-shadow:0 4px 12px rgba(108,123,224,.28);
+  .streak-chip{
+    display:inline-flex; align-items:center; gap:6px;
+    padding:5px 12px; border-radius:999px;
+    background:rgba(255,255,255,.16);
+    border:1px solid rgba(255,255,255,.24);
+    backdrop-filter:blur(4px);
+    font-size:12px; font-weight:600; letter-spacing:.2px;
+    transition:background .2s, border-color .2s, transform .2s;
   }
-  .meta{flex:1; min-width:0;}
-  .meta .name{font-weight:600; font-size:15px; word-break:break-all;}
-  .meta .desc{font-size:12.5px; color:var(--muted); margin-top:2px;}
+  .streak-chip .fire{
+    font-size:13px; filter:drop-shadow(0 0 4px rgba(255,183,71,.55));
+    display:inline-block;
+  }
+  .streak-chip .name{font-weight:700; opacity:.95; margin-right:1px;}
+  .streak-chip .num{
+    font-size:14px; font-weight:800; margin:0 2px;
+    letter-spacing:-.2px;
+  }
+  .streak-chip .unit{opacity:.85; font-weight:500;}
+  .streak-chip.hot{
+    background:rgba(255,183,71,.26);
+    border-color:rgba(255,183,71,.55);
+    box-shadow:0 0 14px rgba(255,183,71,.28);
+  }
+  .streak-chip.hot .fire{
+    animation:flicker 1.8s ease-in-out infinite;
+  }
+  @keyframes flicker{
+    0%,100%{transform:scale(1) rotate(-2deg); filter:drop-shadow(0 0 4px rgba(255,183,71,.55));}
+    50%{transform:scale(1.12) rotate(2deg); filter:drop-shadow(0 0 8px rgba(255,183,71,.9));}
+  }
+
+  .ach-progress{position:relative;}
+  .ach-bar{
+    height:7px; border-radius:999px;
+    background:rgba(255,255,255,.22);
+    overflow:hidden;
+  }
+  .ach-bar i{
+    display:block; height:100%; border-radius:999px;
+    background:linear-gradient(90deg,#ffd77a,#ffb347);
+    box-shadow:0 0 12px rgba(255,183,71,.6);
+    transition:width .6s ease;
+  }
+  .ach-progress-text{
+    font-size:12px; margin-top:8px; opacity:.9;
+    display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;
+  }
+
+  /* 里程碑徽章行 */
+  .milestone-row{
+    display:flex; flex-wrap:wrap; gap:6px;
+    margin-top:10px;
+  }
+  .ms-badge{
+    font-size:11px; font-weight:600;
+    padding:2px 9px; border-radius:999px;
+    background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.2);
+    color:rgba(255,255,255,.75);
+    letter-spacing:.2px;
+    transition:all .2s;
+  }
+  .ms-badge.done{
+    background:rgba(255,183,71,.28);
+    border-color:rgba(255,183,71,.6);
+    color:#fff;
+  }
+  .ms-badge.next{
+    background:rgba(255,255,255,.22);
+    border-color:rgba(255,255,255,.5);
+    color:#fff;
+    animation:msPulse 2.2s ease-in-out infinite;
+  }
+  @keyframes msPulse{
+    0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.35);}
+    50%{box-shadow:0 0 0 4px rgba(255,255,255,0);}
+  }
+
+  /* 两人摘要 */
+  .hero-stats{
+    display:flex; flex-wrap:wrap; gap:10px;
+    margin-top:16px; position:relative;
+  }
+  .stat{
+    background:rgba(255,255,255,.14);
+    backdrop-filter:blur(6px);
+    border:1px solid rgba(255,255,255,.18);
+    border-radius:12px;
+    padding:10px 14px;
+    display:flex; flex-direction:column; gap:1px;
+    min-width:128px; flex:1;
+  }
+  .stat-name{
+    font-size:11.5px; font-weight:700; letter-spacing:.5px;
+    display:flex; align-items:center; gap:6px; opacity:.95;
+  }
+  .stat-name i{
+    display:inline-block; width:8px; height:8px; border-radius:50%;
+    box-shadow:0 0 0 2px rgba(255,255,255,.3);
+  }
+  .stat-value{font-size:18px; font-weight:700; letter-spacing:.3px;}
+  .stat-meta{font-size:11px; opacity:.82;}
+
+  /* ---------- 迷你趋势卡 ---------- */
+  .mini-wrap{
+    display:grid; grid-template-columns:1fr 1fr; gap:14px;
+    margin-bottom:20px;
+  }
+  .mini-card{
+    background:var(--card-bg);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:16px 16px 8px;
+    box-shadow:0 8px 24px rgba(31,41,55,.06);
+    min-width:0;
+  }
+  .mini-card-head{
+    display:flex; align-items:baseline; justify-content:space-between;
+    gap:10px; margin-bottom:4px; flex-wrap:wrap;
+  }
+  .mini-title{
+    display:flex; align-items:center; gap:7px;
+    font-size:13px; font-weight:600;
+  }
+  .mini-dot{width:8px; height:8px; border-radius:50%;}
+  .mini-hint{font-size:11px; color:var(--muted);}
+  .mini-chart-box{height:160px; position:relative;}
+
+  /* ---------- 当前报告卡 ---------- */
+  .current-card{
+    background:var(--card-bg);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:18px 18px 16px;
+    margin-bottom:18px;
+    box-shadow:0 8px 24px rgba(31,41,55,.06);
+    border-color:rgba(46,149,153,.3);
+  }
+  .current-head{
+    display:flex; align-items:center; gap:9px;
+    margin-bottom:14px; flex-wrap:wrap;
+  }
+  .current-label{
+    font-size:11.5px; font-weight:700; letter-spacing:.5px;
+    padding:2px 8px; border-radius:6px;
+    background:rgba(46,149,153,.12); color:var(--teal);
+  }
+  .current-title{font-size:14px; font-weight:600;}
+  .current-range{font-size:12px; color:var(--muted); margin-left:auto;}
+
+  .current-body{
+    display:grid; grid-template-columns:1fr 1fr; gap:12px;
+    margin-bottom:14px;
+  }
+  .entry{
+    display:flex; align-items:center; gap:12px;
+    padding:14px 15px; border-radius:13px;
+    text-decoration:none; color:var(--ink);
+    border:1px solid var(--line);
+    transition:background .15s, border-color .15s;
+    min-height:72px;
+  }
+  .entry.report{background:var(--card-bg);}
+  .entry.report:hover{
+    background:var(--card-hover);
+    border-color:rgba(46,149,153,.35);
+  }
+  .entry.tips{background:var(--tips-bg);}
+  .entry.tips:hover{
+    background:var(--tips-hover);
+    border-color:rgba(217,154,43,.4);
+  }
+  .entry.empty{
+    background:transparent; border-style:dashed; cursor:default;
+  }
+  .entry.empty:hover{background:transparent; border-color:var(--line);}
+
+  .icon{
+    flex:0 0 36px; width:36px; height:36px; border-radius:10px;
+    display:grid; place-items:center; font-size:16px; color:#fff;
+  }
+  .icon.report{
+    background:linear-gradient(135deg,#3fb0b4,#2E9599);
+    box-shadow:0 4px 10px rgba(46,149,153,.28);
+  }
+  .icon.tips{
+    background:linear-gradient(135deg,#e8b45a,#d99a2b);
+    box-shadow:0 4px 10px rgba(217,154,43,.28);
+  }
+  .icon.dim{
+    background:rgba(0,0,0,.04); color:var(--muted);
+    box-shadow:none; font-size:15px;
+  }
+  html[data-theme="dark"] .icon.dim{background:rgba(255,255,255,.06);}
+
+  .content{flex:1; min-width:0;}
+  .content .t{
+    font-weight:600; font-size:13.5px; word-break:break-all; line-height:1.4;
+  }
+  .content .d{
+    font-size:11.5px; color:var(--muted); margin-top:2px; line-height:1.4;
+  }
+  .entry.empty .content .t{color:var(--muted); font-weight:500;}
+  .entry.empty .content .d{opacity:.7;}
   .arrow{
-    flex:0 0 auto; color:var(--muted); font-size:18px; opacity:.55;
+    flex:0 0 auto; color:var(--muted); font-size:17px; opacity:.5;
     transition:transform .15s, opacity .15s;
   }
-  .item:hover .arrow{transform:translateX(3px); opacity:1;}
+  .entry:hover .arrow{transform:translateX(3px); opacity:1;}
+  .entry.empty .arrow{display:none;}
 
-  .empty{
+  /* ---------- Checklist ---------- */
+  .checklist-section{
+    display:grid; grid-template-columns:1fr 1fr; gap:12px;
+    padding-top:14px; border-top:1px dashed var(--line);
+  }
+  .checklist-col{min-width:0;}
+  .checklist-head{
+    display:flex; align-items:center; gap:7px;
+    font-size:12.5px; font-weight:600;
+    margin-bottom:6px;
+  }
+  .checklist-dot{width:8px; height:8px; border-radius:50%;}
+  .check-list{list-style:none; margin:0; padding:0;}
+  .check-item{margin-bottom:1px;}
+  .check-item label{
+    display:flex; align-items:flex-start; gap:9px;
+    cursor:pointer; padding:6px 8px; border-radius:8px;
+    transition:background .12s;
+  }
+  .check-item label:hover{background:rgba(0,0,0,.03);}
+  html[data-theme="dark"] .check-item label:hover{background:rgba(255,255,255,.04);}
+  .check-item input[type="checkbox"]{display:none;}
+  .check-box{
+    flex:0 0 16px; width:16px; height:16px;
+    border:1.5px solid #c9c4b6; border-radius:4px;
+    margin-top:2px; position:relative;
+    transition:all .15s;
+  }
+  html[data-theme="dark"] .check-box{border-color:rgba(255,255,255,.28);}
+  .check-item input:checked + .check-box{
+    background:var(--c,var(--teal));
+    border-color:var(--c,var(--teal));
+  }
+  .check-item input:checked + .check-box::after{
+    content:""; position:absolute;
+    left:4.5px; top:1px;
+    width:4px; height:8px;
+    border:solid #fff; border-width:0 2px 2px 0;
+    transform:rotate(45deg);
+  }
+  .check-text{
+    font-size:12.5px; line-height:1.55; color:var(--ink);
+    transition:color .15s;
+  }
+  .check-item.checked .check-text{
+    color:var(--muted);
+    text-decoration:line-through;
+    text-decoration-color:rgba(0,0,0,.18);
+  }
+
+  /* ---------- 历史归档 ---------- */
+  .history{margin-bottom:18px;}
+  .history details{
+    background:var(--card-bg);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:0 16px;
+  }
+  .history summary{
+    cursor:pointer; padding:14px 0;
+    font-size:13px; font-weight:600; color:var(--muted);
+    list-style:none; display:flex; align-items:center; gap:8px;
+  }
+  .history summary::-webkit-details-marker{display:none;}
+  .history summary::before{
+    content:"▸"; font-size:12px; color:var(--muted);
+    transition:transform .15s;
+  }
+  .history details[open] summary::before{transform:rotate(90deg);}
+  .history ul{
+    list-style:none; margin:0; padding:0 0 12px;
+    border-top:1px dashed var(--line);
+  }
+  .history li{
+    padding:8px 0 8px 16px; font-size:12.5px;
+    position:relative;
+  }
+  .history li::before{
+    content:""; position:absolute; left:2px; top:17px;
+    width:5px; height:5px; border-radius:50%; background:#c9c4b6;
+  }
+  .history a{color:var(--teal); text-decoration:none;}
+  .history a:hover{text-decoration:underline;}
+  .history .h-date{color:var(--muted); margin-left:6px;}
+
+  .empty-state{
     padding:44px 20px; text-align:center; color:var(--muted); font-size:14px;
+    background:var(--card-bg); border-radius:18px; border:1px solid var(--line);
   }
 
   footer{
     text-align:center; color:var(--muted); font-size:12px;
     margin-top:26px; line-height:1.9;
   }
+  footer b{color:var(--ink); font-weight:600;}
 
-  @media (max-width:560px){
+  @media (max-width:640px){
     body{padding:24px 12px 48px;}
-    header.hero{padding:30px 22px 26px; border-radius:18px;}
+    header.hero{padding:26px 20px 22px; border-radius:18px;}
     header.hero h1{font-size:21px;}
-    .item{padding:15px 12px;}
-    .num{flex:0 0 36px; width:36px; height:36px; font-size:13px;}
+    .ach-days .num{font-size:44px;}
+    .hero-stats{flex-direction:column;}
+    .stat{min-width:0;}
+    .mini-wrap{grid-template-columns:1fr;}
+    .current-body, .checklist-section{grid-template-columns:1fr;}
+    .mini-chart-box{height:150px;}
+    .current-range{margin-left:0; width:100%;}
   }
 </style>
 </head>
@@ -124,77 +418,404 @@
   <header class="hero">
     <button class="theme-toggle" id="themeToggle" aria-label="切换深色模式">🌙</button>
     <h1>减肥打卡报告</h1>
-    <p>阶段性小结 · 按周期归档</p>
-    <span class="hero-badge" id="countBadge">共 0 份报告</span>
+    <p>从出发到现在 · 持续更新的整体复盘</p>
+
+    <div class="achievement">
+      <div class="ach-label">🎯 已经坚持</div>
+      <div class="ach-days">
+        <span class="num" id="daysNum">—</span>
+        <span class="unit">天</span>
+      </div>
+      <div class="ach-dates" id="achDates">—</div>
+
+      <div class="streak-row" id="streakRow"></div>
+
+      <div class="ach-progress">
+        <div class="ach-bar"><i id="achBar" style="width:0%"></i></div>
+        <div class="ach-progress-text" id="achProgressText"></div>
+        <div class="milestone-row" id="milestoneRow"></div>
+      </div>
+    </div>
+
+    <div class="hero-stats" id="heroStats"></div>
   </header>
 
-  <div class="list" id="list">
-    <div class="empty">正在加载报告列表…</div>
+  <div class="mini-wrap">
+    <section class="mini-card">
+      <div class="mini-card-head">
+        <span class="mini-title">
+          <span class="mini-dot" style="background:#2E9599"></span>YZ 体重相对变化
+        </span>
+        <span class="mini-hint">相对起点 · 斤</span>
+      </div>
+      <div class="mini-chart-box"><canvas id="miniYZ"></canvas></div>
+    </section>
+    <section class="mini-card">
+      <div class="mini-card-head">
+        <span class="mini-title">
+          <span class="mini-dot" style="background:#6C7BE0"></span>CY 体重相对变化
+        </span>
+        <span class="mini-hint">相对起点 · 斤</span>
+      </div>
+      <div class="mini-chart-box"><canvas id="miniCY"></canvas></div>
+    </section>
   </div>
 
+  <section class="current-card" id="currentCard"></section>
+
+  <section class="history" id="historyWrap" hidden></section>
+
   <footer>
-    ============ 绝密信息，请勿外传 ============
+    清单勾选仅保存在<b>当前浏览器本地</b>，换设备或清缓存会重置，也<b>不会同步给对方</b>。
   </footer>
 </div>
 
 <script>
-/* ============ 手动维护的报告列表 ============ */
-const REPORTS = [
-  {
-    file: "26-10-10_10-21.html",
-    title: "10-10 至 10-21 减肥 12 天小结",
-    desc: "YZ · CY 阶段性复盘"
+/* ============================================================
+   1. 全局配置
+   ============================================================ */
+const CONFIG = {
+  startDate: "2026-10-10",
+  latestDate: "2026-10-21",
+  milestones: [30, 60, 90, 180, 365],
+
+  people: {
+    YZ: { name: "YZ", color: "#2E9599", current: "−2.9", latest: "10-21", streak: 12 },
+    CY: { name: "CY", color: "#6C7BE0", current: "−5.9", latest: "10-21", streak: 12 }
+  },
+
+  report: {
+    file: "report.html",
+    title: "整体复盘报告",
+    desc: "从起点至今 · 体重 / 作息 / 饮食营养"
+  },
+  tips: {
+    file: "notes.html",
+    title: "一页纸",
+    desc: "预警 · Tips · 下周清单"
+  },
+
+  checklist: {
+    YZ: [
+      { id: "yz-1", text: "每天 6000 步，先从 3000 起步" },
+      { id: "yz-2", text: "入睡提前 15 分钟，目标 00:30 前" },
+      { id: "yz-3", text: "每周 2 次 15 分钟自重训练" },
+      { id: "yz-4", text: "断档日只记体重和睡眠" },
+      { id: "yz-5", text: "看 7 天平均体重，不看单日数字" }
+    ],
+    CY: [
+      { id: "cy-1", text: "早餐每天加一份蛋白（鸡蛋/无糖酸奶/牛奶）" },
+      { id: "cy-2", text: "下周开始加运动，第一周只做低冲击 + 核心稳定" },
+      { id: "cy-3", text: "晚餐尽量 20:00 前" },
+      { id: "cy-4", text: "补填的日子在记录里标一下" },
+      { id: "cy-5", text: "看 7 天平均体重，不看单日数字" }
+    ]
+  },
+
+  history: [
+    // { file: "report-2026-10-10_10-18.html", title: "10-10 至 10-18 小结", date: "2026-10-18" }
+  ]
+};
+
+/* ============================================================
+   2. 日期工具
+   ============================================================ */
+function parseDate(s) {
+  const [y, m, d] = s.split("-").map(Number);
+  return Date.UTC(y, m - 1, d);
+}
+function daysInclusive(a, b) {
+  return Math.round((parseDate(b) - parseDate(a)) / 86400000) + 1;
+}
+function shortDate(s) {
+  const p = s.split("-");
+  return p[1] + "-" + p[2];
+}
+
+/* ============================================================
+   3. 成就区（里程碑阶梯）
+   ============================================================ */
+(function renderAchievement() {
+  const totalDays = daysInclusive(CONFIG.startDate, CONFIG.latestDate);
+  const ms = (CONFIG.milestones || [30]).slice().sort(function(a, b){ return a - b; });
+
+  const achieved = ms.filter(function(m){ return m <= totalDays; });
+  const next = ms.find(function(m){ return m > totalDays; });
+  const prev = achieved.length ? achieved[achieved.length - 1] : 0;
+
+  document.getElementById("daysNum").textContent = totalDays;
+  document.getElementById("achDates").innerHTML =
+    `<b>${CONFIG.startDate}</b> 出发 · <b>${CONFIG.latestDate}</b> 仍在路上`;
+
+  let pct = 100;
+  let textHTML = "";
+
+  if (next) {
+    const span = next - prev;
+    const done = totalDays - prev;
+    pct = Math.min(100, Math.round(done / span * 100));
+    if (achieved.length) {
+      textHTML =
+        `<span>已达成 ${prev} 天 🎉 下一站 ${next} 天，还有 ${next - totalDays} 天</span><span>${pct}%</span>`;
+    } else {
+      textHTML =
+        `<span>距离 ${next} 天小目标还有 ${next - totalDays} 天</span><span>${pct}%</span>`;
+    }
+  } else {
+    textHTML = `<span>已达成全部里程碑，继续加油 🏆</span><span>${totalDays} 天</span>`;
   }
-  /* 新增示例：
-  {
-    file: "2026-10-22_11-04.html",
-    title: "10-22 至 11-04 减肥小结",
-    desc: "第二阶段复盘"
-  }
-  */
-];
 
-/* ============ 渲染列表 ============ */
-const list = document.getElementById('list');
-const badge = document.getElementById('countBadge');
+  const bar = document.getElementById("achBar");
+  requestAnimationFrame(function(){ bar.style.width = pct + "%"; });
+  document.getElementById("achProgressText").innerHTML = textHTML;
 
-badge.textContent = '共 ' + REPORTS.length + ' 份报告';
-
-if (REPORTS.length === 0) {
-  list.innerHTML = '<div class="empty">还没有报告，先在列表里添加一条吧～</div>';
-} else {
-  list.innerHTML = REPORTS.map(function(r, i){
+  /* 连续记录徽标 */
+  const streakRow = document.getElementById("streakRow");
+  streakRow.innerHTML = Object.entries(CONFIG.people).map(function([k, p]) {
+    const days = p.streak || 0;
+    const hot = days >= 7;
     return `
-      <a class="item" href="./${encodeURI(r.file)}">
-        <div class="num">${String(i + 1).padStart(2, '0')}</div>
-        <div class="meta">
-          <div class="name">${r.title}</div>
-          <div class="desc">${r.desc || ''}</div>
-        </div>
-        <div class="arrow">›</div>
-      </a>`;
-  }).join('');
-}
+      <span class="streak-chip ${hot ? "hot" : ""}">
+        <span class="fire">🔥</span>
+        <span class="name">${p.name}</span>
+        连续 <span class="num">${days}</span> <span class="unit">天</span>
+      </span>`;
+  }).join("");
 
-/* ============ 深色模式 ============ */
-const root = document.documentElement;
-const btn = document.getElementById('themeToggle');
-
-function applyTheme(theme){
-  root.setAttribute('data-theme', theme);
-  btn.textContent = theme === 'dark' ? '☀️' : '🌙';
-  try { localStorage.setItem('report-theme', theme); } catch(e){}
-}
-
-const saved = (function(){
-  try { return localStorage.getItem('report-theme'); } catch(e){ return null; }
+  /* 里程碑徽章行 */
+  const msRow = document.getElementById("milestoneRow");
+  if (msRow) {
+    msRow.innerHTML = ms.map(function(m) {
+      const done = totalDays >= m;
+      const isNext = m === next;
+      const cls = done ? "done" : (isNext ? "next" : "");
+      const icon = done ? "✓" : (isNext ? "◆" : "○");
+      return `<span class="ms-badge ${cls}">${icon} ${m}天</span>`;
+    }).join("");
+  }
 })();
-const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-applyTheme(saved || (prefersDark ? 'dark' : 'light'));
 
-btn.addEventListener('click', function(){
-  applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+/* ============================================================
+   4. 两人摘要
+   ============================================================ */
+(function renderHeroStats() {
+  const el = document.getElementById("heroStats");
+  el.innerHTML = Object.entries(CONFIG.people).map(function([k, p]) {
+    return `
+      <div class="stat">
+        <span class="stat-name"><i style="background:${p.color}"></i>${p.name}</span>
+        <span class="stat-value">${p.current} 斤</span>
+        <span class="stat-meta">最近记录 ${p.latest}</span>
+      </div>`;
+  }).join("");
+})();
+
+/* ============================================================
+   5. 两张独立迷你体重趋势图
+   ============================================================ */
+const MINI_LABELS = ["10-10","10-11","10-12","10-13","10-14","10-15","10-16","10-17","10-18","10-19","10-20","10-21"];
+
+function miniTrend(id, data, color, fillColor) {
+  new Chart(document.getElementById(id), {
+    type: "line",
+    data: {
+      labels: MINI_LABELS,
+      datasets: [{
+        data: data,
+        borderColor: color,
+        backgroundColor: fillColor,
+        fill: true, tension: .3, borderWidth: 2,
+        pointRadius: 2.5, pointHoverRadius: 5,
+        pointBackgroundColor: "#fff",
+        pointBorderColor: color, pointBorderWidth: 1.8,
+        spanGaps: false
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          displayColors: false, padding: 9, cornerRadius: 8,
+          callbacks: {
+            label: function(ctx) {
+              const v = ctx.parsed.y;
+              if (v == null) return "未记录";
+              return (v > 0 ? "+" : "") + v.toFixed(1) + " 斤";
+            }
+          }
+        }
+      },
+      scales: {
+        y: {
+          min: -7, max: 1,
+          grid: { color: "rgba(0,0,0,0.05)", drawBorder: false },
+          ticks: { font: { size: 10 }, callback: function(v){ return v + "斤"; } }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { font: { size: 9.5 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 5 }
+        }
+      }
+    }
+  });
+}
+
+/* YZ：10-15 为补卡（155.4 → −2.6）；10-21 沿用 10-20 值占位（−2.9） */
+miniTrend("miniYZ",
+  [0, -2.5, -2.1, -2.8, -3.2, -2.6, -2.6, -2.3, -2.8, -2.9, -2.9, -2.9],
+  CONFIG.people.YZ.color, "rgba(46,149,153,.10)");
+
+/* CY：12 天全有记录 */
+miniTrend("miniCY",
+  [0, -1.2, -1.5, -2.2, -3.0, -4.1, -4.7, -4.0, -4.7, -5.2, -5.6, -5.9],
+  CONFIG.people.CY.color, "rgba(108,123,224,.10)");
+
+/* ============================================================
+   6. 本地勾选（按 latestDate 命名空间）
+   ============================================================ */
+const STORAGE_KEY = "weight-checklist-v2";
+function loadChecks() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+  catch (e) { return {}; }
+}
+function saveChecks(s) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch (e) {}
+}
+let checks = loadChecks();
+function checkKey(person, itemId) {
+  return CONFIG.latestDate + "|" + person + "|" + itemId;
+}
+
+/* ============================================================
+   7. 渲染当前报告卡
+   ============================================================ */
+function renderChecklist(person, items) {
+  if (!items || !items.length) return "";
+  const color = (CONFIG.people[person] && CONFIG.people[person].color) || "#888";
+  const rows = items.map(function(item) {
+    const k = checkKey(person, item.id);
+    const checked = !!checks[k];
+    return `
+      <li class="check-item ${checked ? "checked" : ""}">
+        <label>
+          <input type="checkbox" data-key="${k}" ${checked ? "checked" : ""}>
+          <span class="check-box"></span>
+          <span class="check-text">${item.text}</span>
+        </label>
+      </li>`;
+  }).join("");
+  return `
+    <div class="checklist-col" style="--c:${color}">
+      <div class="checklist-head">
+        <span class="checklist-dot" style="background:${color}"></span>
+        ${person} 的本周清单
+      </div>
+      <ul class="check-list">${rows}</ul>
+    </div>`;
+}
+
+(function renderCurrent() {
+  const el = document.getElementById("currentCard");
+
+  const reportHTML = CONFIG.report
+    ? `<a class="entry report" href="./${encodeURI(CONFIG.report.file)}">
+         <div class="icon report">📊</div>
+         <div class="content">
+           <div class="t">${CONFIG.report.title}</div>
+           <div class="d">${CONFIG.report.desc || ""}</div>
+         </div>
+         <div class="arrow">›</div>
+       </a>`
+    : `<div class="entry report empty">
+         <div class="icon dim">—</div>
+         <div class="content">
+           <div class="t">暂无报告</div>
+           <div class="d">可在配置中补充</div>
+         </div>
+       </div>`;
+
+  const tipsHTML = CONFIG.tips
+    ? `<a class="entry tips" href="./${encodeURI(CONFIG.tips.file)}">
+         <div class="icon tips">📝</div>
+         <div class="content">
+           <div class="t">${CONFIG.tips.title}</div>
+           <div class="d">${CONFIG.tips.desc || ""}</div>
+         </div>
+         <div class="arrow">›</div>
+       </a>`
+    : `<div class="entry tips empty">
+         <div class="icon dim">—</div>
+         <div class="content">
+           <div class="t">暂无一页纸</div>
+           <div class="d">可在配置中补充</div>
+         </div>
+       </div>`;
+
+  const yzHTML = renderChecklist("YZ", CONFIG.checklist.YZ);
+  const cyHTML = renderChecklist("CY", CONFIG.checklist.CY);
+  const hasChecklist = yzHTML || cyHTML;
+
+  el.innerHTML = `
+    <div class="current-head">
+      <span class="current-label">当前报告</span>
+      <span class="current-title">起点至今整体复盘</span>
+      <span class="current-range">${shortDate(CONFIG.startDate)} → ${CONFIG.latestDate}</span>
+    </div>
+    <div class="current-body">
+      ${reportHTML}
+      ${tipsHTML}
+    </div>
+    ${hasChecklist ? `<div class="checklist-section">${yzHTML}${cyHTML}</div>` : ""}`;
+})();
+
+document.getElementById("currentCard").addEventListener("change", function(e) {
+  const cb = e.target.closest('input[type="checkbox"]');
+  if (!cb) return;
+  const k = cb.dataset.key;
+  if (cb.checked) checks[k] = true;
+  else delete checks[k];
+  saveChecks(checks);
+  const li = cb.closest(".check-item");
+  if (li) li.classList.toggle("checked", cb.checked);
 });
+
+/* ============================================================
+   8. 历史归档（可选）
+   ============================================================ */
+(function renderHistory() {
+  if (!CONFIG.history || !CONFIG.history.length) return;
+  const wrap = document.getElementById("historyWrap");
+  wrap.hidden = false;
+  const items = CONFIG.history.map(function(h) {
+    return `<li><a href="./${encodeURI(h.file)}">${h.title}</a><span class="h-date">${h.date || ""}</span></li>`;
+  }).join("");
+  wrap.innerHTML = `
+    <details>
+      <summary>历史报告（${CONFIG.history.length}）</summary>
+      <ul>${items}</ul>
+    </details>`;
+})();
+
+/* ============================================================
+   9. 深色模式
+   ============================================================ */
+(function theme() {
+  const root = document.documentElement;
+  const btn = document.getElementById("themeToggle");
+  function apply(t) {
+    root.setAttribute("data-theme", t);
+    btn.textContent = t === "dark" ? "☀️" : "🌙";
+    try { localStorage.setItem("report-theme", t); } catch (e) {}
+  }
+  let saved = null;
+  try { saved = localStorage.getItem("report-theme"); } catch (e) {}
+  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  apply(saved || (prefersDark ? "dark" : "light"));
+  btn.addEventListener("click", function() {
+    apply(root.getAttribute("data-theme") === "dark" ? "light" : "dark");
+  });
+})();
 </script>
 </body>
 </html>
