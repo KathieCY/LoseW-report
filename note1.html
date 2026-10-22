@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>一页纸备忘 · 给 YZ & CY</title>
+<style>
+  :root{
+    --ink:#2b2b2b; --muted:#7a7a7a;
+    --paper:#fdfcf8; --edge:#e8e4da;
+    --teal:#2E9599; --purple:#6C7BE0;
+    --warn:#c0392b; --note:#b8860b; --ok:#2e9e6b;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; padding:40px 16px 64px;
+    background:#eceae3;
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.7; -webkit-font-smoothing:antialiased;
+  }
+  .paper{
+    max-width:780px; margin:0 auto;
+    background:var(--paper);
+    border:1px solid var(--edge)；
+    border-radius:6px;
+    box-shadow:0 12px 40px rgba(60,50,30,.12);
+    padding:44px 44px 36px;
+    position:relative;
+  }
+  .paper::before{
+    content:""; position:absolute; left:0; top:0; bottom:0; width:5px;
+    background:linear-gradient(180deg,var(--teal),var(--purple));
+    border-radius:6px 0 0 6px;
+  }
+
+  header{margin-bottom:26px;}
+  header h1{
+    margin:0 0 6px; font-size:22px; letter-spacing:.5px; font-weight:700;
+  }
+  header .meta{
+    font-size:12.5px; color:var(--muted); display:flex; flex-wrap:wrap; gap:6px 16px;
+  }
+
+  section{margin-bottom:26px;}
+  section h2{
+    font-size:14px; margin:0 0 10px; font-weight:700;
+    display:flex; align-items:center; gap:8px;
+    letter-spacing:.3px; color:#1a1a1a;
+  }
+  section h2 .bar{
+    width:3px; height:15px; border-radius:2px; background:var(--teal);
+  }
+  section.warn h2 .bar{background:var(--warn);}
+  section.note h2 .bar{background:var(--note);}
+  section.ok h2 .bar{background:var(--ok);}
+
+  p{margin:0 0 8px; font-size:13.5px;}
+  .small{font-size:12.5px; color:var(--muted);}
+
+  ul.list{list-style:none; margin:0; padding:0;}
+  ul.list li{
+    position:relative; padding:7px 0 7px 18px; font-size:13.5px;
+    border-bottom:1px dotted #e5e1d6;
+  }
+  ul.list li:last-child{border-bottom:none;}
+  ul.list li::before{
+    content:""; position:absolute; left:2px; top:16px;
+    width:5px; height:5px; border-radius:50%; background:#c9c4b6;
+  }
+  ul.list li b{color:#111;}
+
+  .tag{
+    display:inline-block; font-size:11px; padding:1px 7px; border-radius:4px;
+    margin-right:6px; font-weight:600; vertical-align:1px;
+  }
+  .tag.red{background:rgba(192,57,43,.1); color:var(--warn);}
+  .tag.yel{background:rgba(184,134,11,.12); color:#9a7009;}
+  .tag.grn{background:rgba(46,158,107,.12); color:var(--ok);}
+  .tag.tea{background:rgba(46,149,153,.12); color:#227679;}
+  .tag.pur{background:rgba(108,123,224,.12); color:#4a56b8;}
+
+  .callout{
+    background:#fffdf4; border:1px solid #efe8d2; border-radius:8px;
+    padding:12px 16px; font-size:13px; margin-bottom:14px;
+  }
+  .callout.grey{background:#f7f6f2; border-color:#e8e4da;}
+
+  .two-col{
+    display:grid; grid-template-columns:1fr 1fr; gap:16px;
+  }
+  .box{
+    border:1px solid var(--edge); border-radius:8px; padding:14px 16px;
+    background:#fff;
+  }
+  .box h3{
+    margin:0 0 8px; font-size:13px; font-weight:700;
+  }
+  .box.yz h3{color:#227679;}
+  .box.cy h3{color:#4a56b8;}
+  .box ul{list-style:none; margin:0; padding:0;}
+  .box ul li{
+    font-size:12.5px; padding:4px 0 4px 14px; position:relative;
+    color:#3d3d3d;
+  }
+  .box ul li::before{
+    content:"·"; position:absolute; left:2px; top:2px; font-weight:700; color:#b8b2a2;
+  }
+
+  .checklist{list-style:none; margin:0; padding:0;}
+  .checklist li{
+    font-size:13px; padding:6px 0 6px 24px; position:relative;
+  }
+  .checklist li::before{
+    content:""; position:absolute; left:2px; top:10px;
+    width:12px; height:12px; border:1.5px solid #c9c4b6; border-radius:3px;
+  }
+
+  .rule{
+    height:1px; background:#e8e4da; margin:24px 0;
+    border:none;
+  }
+
+  footer{
+    margin-top:28px; padding-top:14px; border-top:1px solid var(--edge);
+    font-size:12px; color:var(--muted); line-height:1.8;
+  }
+
+  @media (max-width:640px){
+    body{padding:20px 10px 40px;}
+    .paper{padding:28px 20px 24px; border-radius:4px;}
+    .two-col{grid-template-columns:1fr;}
+    header h1{font-size:19px;}
+  }
+
+  @media print{
+    body{background:#fff; padding:0;}
+    .paper{box-shadow:none; border:none; max-width:100%; padding:20px 24px;}
+    .paper::before{display:none;}
+    section{break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<div class="paper">
+
+  <header>
+    <h1>一页纸 · 给 YZ &amp; CY</h1>
+    <div class="meta">
+      <span>记录周期 2026-10-10 至 10-21</span>
+      <span>整理于 2026-10-22</span>
+    </div>
+  </header>
+
+  <!-- 数据小提醒 -->
+  <section class="note">
+    <h2><span class="bar"></span>关于记录的一点小提醒</h2>
+    <div class="callout grey">
+      睡觉和起床时间都是实际发生的时间，这点没问题。要留意的是<b>补填时凭记忆写的时间</b>——
+      比如 10-17 晚上 21:37 打卡、记录里写了 03:30 入睡，说明这条是后来补的，时序上会有偏差；
+      10-14 同一天有两条起床时间（06:30 和 08:00），补卡那条的可信度也要打折。
+      <div class="small" style="margin-top:6px;">做睡眠趋势时把这几条当参考就好，不用否定整体记录。以后尽量当天睡前填，补填的日子标一下。</div>
+    </div>
+  </section>
+
+  <!-- 三个真正的预警 -->
+  <section class="warn">
+    <h2><span class="bar"></span>值得预警的三件事</h2>
+    <ul class="list">
+      <li>
+        <span class="tag red">CY</span><b>减重速度偏快。</b>
+        12 天减 5.9 斤，约每周 3.4 斤；对当前基数，推荐速度是每周 0.5%—1%（约 0.7—1.4 斤）。
+        初期含水分和糖原可以理解，但如果持续这个速度，加上还没开始力量训练，肌肉流失和代谢适应风险会上升。
+      </li>
+      <li>
+        <span class="tag red">两人</span><b>正式运动都是 0 次。</b>
+        热量缺口全靠饮食，掉的不只是脂肪，还有肌肉。YZ 后段 4 天只降 0.3 斤，已经是平台信号；
+        CY 的 5.9 斤里，可能有一部分是肌肉和水分，不是纯脂肪。
+      </li>
+      <li>
+        <span class="tag red">CY</span><b>早餐长期空缺。</b>
+        12 天只有 2 天有蛋白来源，多数空腹或只喝拿铁/豆浆。
+        空腹 + 咖啡因 + 晚睡，皮质醇偏高，容易囤腹部脂肪、掉肌肉；拿铁若有糖或全脂，热量不低但饱腹感差，容易在晚餐补偿。
+      </li>
+    </ul>
+  </section>
+
+  <!-- 记录偏差 + 单日波动 -->
+  <section class="note">
+    <h2><span class="bar"></span>两个容易误判的地方</h2>
+    <ul class="list">
+      <li>
+        <span class="tag yel">波动</span><b>单日大起大落不是脂肪。</b>
+        一天掉 2.5 斤、反弹 0.7 斤，都是水分和糖原。1 斤脂肪约 3500 kcal，一天掉 2.5 斤脂肪需要约 8750 kcal 缺口，不可能。
+        看 7 天移动平均比看单日准。
+      </li>
+      <li>
+        <span class="tag yel">记录</span><b>高热量频繁但体重仍降，可能有记录偏差。</b>
+        漏记零食饮料酱料、份量低估、晚餐实际吃得很少，都会让记录比真实摄入“好看”。
+        体重降说明缺口存在，但不代表营养质量好。
+      </li>
+    </ul>
+  </section>
+
+  <!-- 不调饮食的杠杆 -->
+  <section>
+    <h2><span class="bar"></span>不调饮食，还能动这四个杠杆</h2>
+    <p class="small" style="margin-bottom:12px;">饮食内容不动，减重的杠杆还剩：睡眠、日常活动量、进食时间、力量训练。优先级从高到低。</p>
+    <ul class="list">
+      <li><b>1. 睡眠优先。</b>睡眠不足升饥饿素、降瘦素、降胰岛素敏感性、抬皮质醇。把入睡提前 30 分钟，比多走 3000 步收益大。</li>
+      <li><b>2. NEAT 而不是正式运动。</b>多走、多站、少坐；通勤提前一站、饭后走 10 分钟。比高强度更容易坚持，也不容易引发食欲反弹。</li>
+      <li><b>3. 只动“什么时候吃”。</b>晚餐提前到 20:00 前；早餐加一个鸡蛋或一杯无糖酸奶——这是改节律，不是改食谱。</li>
+      <li><b>4. 力量训练保肌肉。</b>每周 2 次自重训练（深蹲、臀桥、俯卧撑）就够起步，减重期不掉肌肉比掉秤更重要。</li>
+    </ul>
+  </section>
+
+  <!-- 两人分别 -->
+  <section>
+    <h2><span class="bar"></span>各自适合的方向</h2>
+    <div class="two-col">
+      <div class="box yz">
+        <h3>YZ · NEAT 优先 + 睡眠修复 + 弹性记录</h3>
+        <ul>
+          <li>不建议严格节食：已在平台期，再压边际收益低，容易触发暴食</li>
+          <li>每天 6000—8000 步，从 3000 起步也行</li>
+          <li>每周 2 次 15 分钟自重训练</li>
+          <li>入睡从 01:30 往 00:30 挪，一次挪 15 分钟</li>
+          <li>断档日只记体重和睡眠，降低记录负担</li>
+        </ul>
+      </div>
+      <div class="box cy">
+        <h3>CY · 晚餐提前 + 核心康复 + 力量训练</h3>
+        <ul>
+          <li>记录细、执行度高，缺的不是“知道吃什么”，是吃的窗口太晚</li>
+          <li>晚餐尽量 20:00 前，比戒喜糖更容易坚持</li>
+          <li>早餐加一份蛋白，先把有蛋白天数从 2 天提到 5 天</li>
+          <li>腰疼已看医生、康复中：先低冲击（步行、死虫、鸟狗、臀桥）</li>
+          <li>下周加运动时渐进，别一上来高强度</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 睡眠不足的运动风险 -->
+  <section class="note">
+    <h2><span class="bar"></span>一个别忽略的细节</h2>
+    <p>
+      YZ 10-17 只睡 3.4 小时那天写“不敢锻炼怕猝死”——这句虽然是玩笑，但方向是对的：
+      <b>睡眠不足 5 小时的日子，运动改成 10 分钟拉伸或散步，别上强度。</b>
+      但反过来，别因此长期不运动，这是两件事。
+    </p>
+  </section>
+
+  <hr class="rule">
+
+  <!-- 下周清单 -->
+  <section class="ok">
+    <h2><span class="bar"></span>下周就做这几件</h2>
+    <ul class="checklist">
+      <li>YZ：每天 6000 步，先从 3000 起步</li>
+      <li>YZ：入睡提前 15 分钟，目标 00:30 前</li>
+      <li>CY：下周开始加运动，第一周只做低冲击 + 核心稳定，别上强度</li>
+      <li>CY：早餐每天加一份蛋白（鸡蛋 / 无糖酸奶 / 牛奶）</li>
+      <li>两人：补填的日子在记录里标一下，方便以后看趋势</li>
+      <li>两人：看 7 天平均体重，不看单日数字</li>
+    </ul>
+  </section>
+
+  <footer>
+    热量与营养为基于打卡记录的估算，仅作趋势参考，不作为精确计算。
+  </footer>
+
+</div>
+</body>
+</html>
