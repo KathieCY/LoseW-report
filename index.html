@@ -304,9 +304,21 @@
   .entry.empty .arrow{display:none;}
 
   /* ---------- Checklist ---------- */
+  .checklist-block{border-top:1px dashed var(--line); margin-top:12px; padding-top:4px;}
+  .checklist-toggle{
+    display:none;
+    width:100%; border:none; background:transparent;
+    color:var(--muted); font-family:inherit;
+    font-size:12.5px; font-weight:600;
+    padding:8px 2px; cursor:pointer;
+    align-items:center; justify-content:space-between;
+  }
+  .checklist-toggle .toggle-arrow{transition:transform .2s;}
+  .checklist-block.open .toggle-arrow{transform:rotate(180deg);}
+
   .checklist-section{
     display:grid; grid-template-columns:1fr 1fr; gap:12px;
-    padding-top:14px; border-top:1px dashed var(--line);
+    padding-top:14px;
   }
   .checklist-col{min-width:0;}
   .checklist-head{
@@ -399,17 +411,88 @@
   }
   footer b{color:var(--ink); font-weight:600;}
 
+  /* ============================================================
+     移动端精简（H5）
+     ============================================================ */
   @media (max-width:640px){
-    body{padding:24px 12px 48px;}
-    header.hero{padding:26px 20px 22px; border-radius:18px;}
-    header.hero h1{font-size:21px;}
-    .ach-days .num{font-size:44px;}
-    .hero-stats{flex-direction:column;}
-    .stat{min-width:0;}
-    .mini-wrap{grid-template-columns:1fr;}
-    .current-body, .checklist-section{grid-template-columns:1fr;}
-    .mini-chart-box{height:150px;}
-    .current-range{margin-left:0; width:100%;}
+    body{padding:16px 10px 36px;}
+
+    header.hero{
+      padding:22px 16px 18px;
+      border-radius:16px;
+      margin-bottom:14px;
+    }
+    header.hero h1{font-size:20px;}
+    header.hero p{font-size:12.5px;}
+
+    .achievement{
+      padding:14px 14px 12px;
+      border-radius:13px;
+      margin-top:14px;
+    }
+    .ach-label{font-size:11.5px;}
+    .ach-days{margin:4px 0 2px;}
+    .ach-days .num{font-size:40px;}
+    .ach-days .unit{font-size:14px;}
+    .ach-dates{font-size:12px; margin-bottom:10px;}
+
+    .streak-row{gap:6px; margin:-2px 0 10px;}
+    .streak-chip{padding:4px 9px; font-size:11px;}
+    .streak-chip .fire{font-size:12px;}
+    .streak-chip .num{font-size:13px;}
+
+    .ach-progress-text{font-size:11.5px; margin-top:6px;}
+
+    .milestone-row{gap:4px; margin-top:8px;}
+    .ms-badge{font-size:10px; padding:2px 6px;}
+
+    /* 两人摘要：两列并排 */
+    .hero-stats{
+      flex-direction:row;
+      gap:8px;
+      margin-top:12px;
+    }
+    .stat{
+      min-width:0;
+      flex:1 1 calc(50% - 4px);
+      padding:8px 10px;
+    }
+    .stat-name{font-size:11px;}
+    .stat-value{font-size:15px;}
+    .stat-meta{font-size:10.5px;}
+
+    /* 趋势图紧凑 */
+    .mini-wrap{gap:10px; margin-bottom:14px;}
+    .mini-card{padding:12px 12px 6px; border-radius:14px;}
+    .mini-card-head{margin-bottom:2px;}
+    .mini-title{font-size:12px;}
+    .mini-hint{display:none;}
+    .mini-chart-box{height:120px;}
+
+    /* 报告卡紧凑 */
+    .current-card{
+      padding:14px 14px 12px;
+      border-radius:14px;
+      margin-bottom:14px;
+    }
+    .current-head{gap:7px; margin-bottom:10px;}
+    .current-title{font-size:13px;}
+    .current-range{font-size:11.5px; margin-left:0; width:100%;}
+
+    .current-body{gap:8px; margin-bottom:10px;}
+    .entry{padding:12px 12px; min-height:60px; border-radius:11px;}
+    .icon{flex:0 0 32px; width:32px; height:32px; font-size:14px;}
+    .content .t{font-size:13px;}
+    .content .d{font-size:11px;}
+
+    /* 清单折叠 */
+    .checklist-block{border-top:1px dashed var(--line); margin-top:10px; padding-top:2px;}
+    .checklist-toggle{display:flex;}
+    .checklist-block:not(.open) .checklist-section{display:none;}
+    .checklist-section{padding-top:10px; border-top:none;}
+
+    .history{margin-bottom:14px;}
+    footer{margin-top:20px; font-size:11.5px;}
   }
 </style>
 </head>
@@ -533,7 +616,7 @@ function shortDate(s) {
 }
 
 /* ============================================================
-   3. 成就区（里程碑阶梯）
+   3. 成就区
    ============================================================ */
 (function renderAchievement() {
   const totalDays = daysInclusive(CONFIG.startDate, CONFIG.latestDate);
@@ -569,7 +652,6 @@ function shortDate(s) {
   requestAnimationFrame(function(){ bar.style.width = pct + "%"; });
   document.getElementById("achProgressText").innerHTML = textHTML;
 
-  /* 连续记录徽标 */
   const streakRow = document.getElementById("streakRow");
   streakRow.innerHTML = Object.entries(CONFIG.people).map(function([k, p]) {
     const days = p.streak || 0;
@@ -582,7 +664,6 @@ function shortDate(s) {
       </span>`;
   }).join("");
 
-  /* 里程碑徽章行 */
   const msRow = document.getElementById("milestoneRow");
   if (msRow) {
     msRow.innerHTML = ms.map(function(m) {
@@ -661,18 +742,16 @@ function miniTrend(id, data, color, fillColor) {
   });
 }
 
-/* YZ：10-15 为补卡（155.4 → −2.6）；10-21 沿用 10-20 值占位（−2.9） */
 miniTrend("miniYZ",
   [0, -2.5, -2.1, -2.8, -3.2, -2.6, -2.6, -2.3, -2.8, -2.9, -2.9, -2.9],
   CONFIG.people.YZ.color, "rgba(46,149,153,.10)");
 
-/* CY：12 天全有记录 */
 miniTrend("miniCY",
   [0, -1.2, -1.5, -2.2, -3.0, -4.1, -4.7, -4.0, -4.7, -5.2, -5.6, -5.9],
   CONFIG.people.CY.color, "rgba(108,123,224,.10)");
 
 /* ============================================================
-   6. 本地勾选（按 latestDate 命名空间）
+   6. 本地勾选
    ============================================================ */
 const STORAGE_KEY = "weight-checklist-v2";
 function loadChecks() {
@@ -766,9 +845,18 @@ function renderChecklist(person, items) {
       ${reportHTML}
       ${tipsHTML}
     </div>
-    ${hasChecklist ? `<div class="checklist-section">${yzHTML}${cyHTML}</div>` : ""}`;
+    ${hasChecklist ? `
+      <div class="checklist-block">
+        <button class="checklist-toggle" type="button" aria-expanded="false">
+          <span>本周行动清单</span>
+          <span class="toggle-arrow">▾</span>
+        </button>
+        <div class="checklist-section">${yzHTML}${cyHTML}</div>
+      </div>
+    ` : ""}`;
 })();
 
+/* 勾选事件 */
 document.getElementById("currentCard").addEventListener("change", function(e) {
   const cb = e.target.closest('input[type="checkbox"]');
   if (!cb) return;
@@ -778,6 +866,16 @@ document.getElementById("currentCard").addEventListener("change", function(e) {
   saveChecks(checks);
   const li = cb.closest(".check-item");
   if (li) li.classList.toggle("checked", cb.checked);
+});
+
+/* 清单折叠切换（移动端） */
+document.getElementById("currentCard").addEventListener("click", function(e) {
+  const toggle = e.target.closest(".checklist-toggle");
+  if (!toggle) return;
+  const block = toggle.closest(".checklist-block");
+  if (!block) return;
+  const open = block.classList.toggle("open");
+  toggle.setAttribute("aria-expanded", open ? "true" : "false");
 });
 
 /* ============================================================
